@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="Imolemation-post-employeesSub_Flow" doc:id="a768fdd4-4793-40e9-81c6-2ad59cb34c83" >
+	<foreach doc:name="For Each" doc:id="9fb60c6c-ac27-4046-a971-8f927b1441b2" collection="#[payload]">
+			<db:insert doc:name="Insert" doc:id="be235dc0-348a-4e57-abaa-0fdc8f09f847" config-ref="Database_Config">
+			<db:sql><![CDATA[insert into craftsoft_project(id,first_Name,last_Name,age,salary) values (:id,:first_Name,:last_Name,:age,:salary)
+]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	id :payload.id,
+	first_Name :payload.first_Name,
+	last_Name : payload.last_Name,
+	age :payload.age,
+	salary :payload.salary
+	
+}]]]></db:input-parameters>
+		</db:insert>
+		</foreach>
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<set-payload value='#["inserted"]' doc:name="Set Payload" doc:id="809cf509-921c-4f10-b0e8-540e771c8276" />
+	
+	
+	
+	
+	
+	</sub-flow>
+</mule>

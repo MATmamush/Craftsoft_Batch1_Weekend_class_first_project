@@ -1,0 +1,73 @@
+#%RAML 1.0
+title: Craftsoft_B32-Weekend_class_Team
+protocols:
+  - HTTP
+  - HTTPS 
+version: 1.0.0
+uses:
+  lib: library.raml
+  
+  
+/employees:
+  type:
+    lib.employees_data
+    
+  is:
+      - lib.error         
+              
+  post:
+    description: create employee 
+    body:
+      application/json:
+        type: lib.EMP_data_type[]
+        example: !include example/employees.json
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              {
+                "massage": "employee crated"
+              }
+    is:
+      - lib.error   
+  /{employeeID}:
+    type:
+      lib.employee_data_byID
+      
+    is:
+      - lib.error
+    put:
+      description: update employee by id
+      body:
+        application/json:
+          type: lib.EMP_data_type
+          example: !include example/employeeID.json
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  "massage":"employee updated"
+                }
+      is:
+        - lib.error
+    delete:
+      responses:
+       200:
+        body:
+          application/json:
+            type: lib.EMP_data_type 
+            example: !include example/employeeID.json
+      is:
+        - lib.error
+
+                
+              
+
+            
+          
+                
+      
+      

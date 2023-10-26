@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	
+	<http:listener-config name="craftsoft_b32-weekend_class_team-httpListenerConfig">
+        <http:listener-connection host="${secure::http.host}" port="${secure::http.port}" />
+    </http:listener-config>
+    <apikit:config name="craftsoft_b32-weekend_class_team-config" api="craftsoft_b32-weekend_class_team.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="c7eb2839-7cca-4764-8515-552297a6696d" >
+		<db:my-sql-connection host="${secure::db.host}" port="${secure::db.port}" password="${secure::db.password}" database="${secure::db.database}" user="${secure::db.user}"/>
+	</db:config>
+	<configuration doc:name="Configuration" doc:id="d12c37c3-1cec-4c29-8e38-1191aaa8a32b" defaultErrorHandler-ref="Global-Error_-HandelerError_Handler" />
+	<configuration-properties doc:name="Configuration properties" doc:id="c5448824-ae0e-44bb-9655-b7015b23f1ff" file="Employee-secure.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="e9d782aa-8c03-4d71-87af-baab4e8527bc" file="Employee-secure.yaml" key="mulesoft" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	
+</mule>

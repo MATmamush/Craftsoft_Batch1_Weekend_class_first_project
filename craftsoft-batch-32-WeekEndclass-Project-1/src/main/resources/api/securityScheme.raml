@@ -1,0 +1,24 @@
+#%RAML 1.0 SecurityScheme
+type: OAuth 2.0
+describedBy:
+  headers:
+    Authorization: string
+  queryParameters:
+    token:
+      type: string
+  responses:
+    401:
+      body:
+        application/json:
+          example:
+            {
+              "massage":" unathorized"
+            }
+    403:
+      body:
+        application/json:
+          example:
+            {
+              "message":" forbidden"
+            }
+          
