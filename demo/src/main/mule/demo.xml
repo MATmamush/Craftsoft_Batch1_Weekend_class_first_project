@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="27ed5f79-0948-459b-952b-7c8ceac6cce9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="61521e60-184a-4d38-aef1-51f36e761deb" >
+		<http:request-connection host="jsonplaceholder.typicode.com" />
+	</http:request-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="d84c132d-86cb-47a9-98e7-e58270b6dcf4" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="online_shopping" />
+	</db:config>
+	<flow name="HTTP_REQUEST_ASSIGMENT" doc:id="56b6bf40-b7f9-4c57-bb73-28578dceace8" >
+		<http:listener doc:name="Listener" doc:id="ee84f395-ad31-4a5a-8165-e53a010d6bc5" config-ref="HTTP_Listener_config" path="albums"/>
+		<http:request method="GET" doc:name="Request" doc:id="fc53b399-79a1-4713-859f-278f484854f8" config-ref="HTTP_Request_configuration" path="albums"/>
+		<ee:transform doc:name="Transform Message" doc:id="d239c5be-ff81-44d8-9f1d-731ae854a777" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="1155852b-3f73-40ff-9dab-986e61e574fd" >
+			<db:insert doc:name="Insert" doc:id="666694bd-5e79-4fb0-82d4-4a97b22b41d9" config-ref="Database_Config">
+				<db:sql ><![CDATA[insert into albums(userId ,id ,title) values(:userId ,:id, :title)]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{
+	userId:payload.userId,
+	id:payload.id,
+	title:payload.title
+	
+}]]]></db:input-parameters>
+			</db:insert>
+		</foreach>
+		<set-payload value='#[" ALL ALBUMS DATA INSTERTED IN TO DATA BASE  "]' doc:name="Set Payload" doc:id="fabf0453-26ee-4c80-bc2f-7c3861a5f46d" />
+	</flow>
+</mule>
