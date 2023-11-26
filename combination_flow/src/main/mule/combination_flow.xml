@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="6ff4b010-9ef2-41d4-8478-058f7249070e" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<flow name="combination_flowFlow" doc:id="ddcd1e09-8e38-48cc-98e1-4073c3f08e65" >
+		<http:listener doc:name="Listener" doc:id="77087319-95e9-4b44-9d5d-abba0f76d03f" config-ref="HTTP_Listener_config1" path="2_FLOW"/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="abbb3bb0-a87b-4a6a-986e-73addf52b0c3" >
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="d189c836-8b39-4b08-853c-f952a3b59ef3" name="combination_flowSub_Flow"/>
+				<set-variable value="#[sizeOf(attributes.queryParams.first_name)]" doc:name="Set Variable" doc:id="f33f958a-8f42-4482-afa0-309e6068c33a" variableName="first_name"/>
+			</route>
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="5e63ead3-886a-4ffd-bb4c-6140d6a19945" name="combination_flowSub_Flow1"/>
+				<set-variable value="#[sizeOf(attributes.queryParams.first_name)]" doc:name="Set Variable" doc:id="e5629f3d-130a-4a6a-80af-cd9f16fdf943" variableName="last_name"/>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="01b73b08-5f9e-4a7c-9148-8f1f9879f462" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "sizeof first_name":vars.first_name,
+  "sizeof last_name":vars.last_name
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<sub-flow name="combination_flowSub_Flow" doc:id="f87ddc85-b7d4-4cca-8394-6546e920bd40" >
+		<set-payload value="#[sizeOf(attributes.queryParams.first_name)]" doc:name="Set Payload" doc:id="3de79aa8-e13a-495f-b7ee-7622994ddb0a" />
+	</sub-flow>
+	<sub-flow name="combination_flowSub_Flow1" doc:id="5a3c37b7-db74-49e2-a0cd-dffc707b70a5" >
+		<set-payload value="#[sizeOf(attributes.queryParams.last_name)]" doc:name="Set Payload" doc:id="3da3c6a7-ed6b-4ca5-b358-5944aaea3de4" />
+	</sub-flow>
+</mule>

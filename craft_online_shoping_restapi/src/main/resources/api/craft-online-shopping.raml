@@ -1,0 +1,67 @@
+#%RAML 1.0
+title: craft-online-shopping
+
+protocols:
+  - http
+  - https
+#baseUri: http://localhost:8081/api
+
+uses:
+  lib: library.raml
+types:
+  productType: !include Datatype/product.raml
+
+/products:
+  type:
+    lib.get:
+      get-type-get: productType[]
+      get-example-get: !include example/products.json
+   
+  is:
+    lib.Error
+
+  /{productId}:
+    type:
+      lib.get:
+        get-type-get: productType
+        get-example-get: !include example/product.json
+      
+    
+    is:
+      lib.Error
+/order:
+  post:
+    body:
+      application/json:
+        example:
+           !include example/orderReq.json
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+             !include example/orderRes.json
+/users:
+  post:
+    body:
+      application/json:
+        example: !include example/users.json 
+
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              {
+                " userid":200
+              }
+/category:
+  type:
+   lib.get:
+    get-type-get: productType[]
+    get-example-get: !include example/category.json
+    
+  is:
+    - lib.Error
+          
+      

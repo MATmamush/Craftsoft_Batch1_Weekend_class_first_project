@@ -1,0 +1,8 @@
+#%RAML 1.0 Library
+usage:
+  types:
+  productType: !include Datatype/product.raml
+traits:
+  Error: !include traits/trait.raml
+resourceTypes:
+  get: !include resourseType/getcollection.raml
